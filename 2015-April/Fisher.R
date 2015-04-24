@@ -13,11 +13,15 @@ makeTable <- function(x){
 input <- as.matrix(read.csv(file=InFile,header=F,sep='\t'));
 pvalue <- NULL;
 n <- nrow(input);
+pvalue = numeric(n)
 for(i in 1:n){
 	result <- fisher.test(makeTable(as.double(input[i,2:5])));
-	pvalue <- c(pvalue,result$p.value);
-	padj <- p.adjust(pvalue, method = "bonferroni", n = length(pvalue))
+	pvalue[i] <- result$p.value;
 }
+
+# False Discovery Rate (FDR) or Family-Wise Error Rate (FWER) ?
+padj <- p.adjust(pvalue, method = "bonferroni", n = length(pvalue))
+# I THINK WE SHOULD USE BH!
 
 fold <- NULL;
 fold <- (((as.double(input[,2]))*(as.double(input[,5])))/((as.double(input[,3]))*(as.double(input[,4]))));
